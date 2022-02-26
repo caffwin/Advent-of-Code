@@ -1,5 +1,4 @@
 # Lanternfish
-# Create function that models their exponential growth rate based on internal timers that indicate when new spawns occur
 
 initial_state = []
 
@@ -33,12 +32,4 @@ def calc_lanternfish_growth(initial_state, num_days):
 
     return total_fish
 
-def calc_lanturnfish_growth_dict(initial_state, num_days):
-
-    # Keep dict of internal timer values and modify those each day instead
-
-    return
-
-# Part Two - check test case example for 256 days
-
-print('calc_lanternfish_growth: ', calc_lanternfish_growth(initial_state, 256))
+print('calc_lanternfish_growth: ', calc_lanternfish_growth(initial_state, 80))
