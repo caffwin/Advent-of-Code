@@ -2,8 +2,7 @@
 
 full_bin_list = []
 
-# with open('puzzle_input.txt') as file:
-with open('test_file.txt') as file:
+with open('puzzle_input.txt') as file:
     lines = file.readlines()    
     for line in lines:
         full_bin_list.append(line.strip())
@@ -17,21 +16,20 @@ def convert_bin_to_decimal(binary_str):
 
 def find_oxy_rate(lst):
     """
-        Takes in a list of binary numbers as strings of the same length and outputs a 
-        binary number as the last standing number
+        Takes in a list of binary numbers as strings of the same length, performs processing based on
+        most common bit criteria and outputs a decimal number representation of the last standing number
+        as an int.
     """
     
-    output_num = ""
     list_length = len(lst[0])
-    print('lst: ', lst)
-
     updated_list = lst
+    oxy_rating_bin = None
 
     for i in range(list_length):
         lst_zeroes = []
         lst_ones = []
 
-        for binary_num in updated_list: # 00100
+        for binary_num in updated_list:
             if binary_num[i] == "0":
                 lst_zeroes.append(binary_num)
             else:
@@ -45,21 +43,50 @@ def find_oxy_rate(lst):
             else:
                 updated_list = lst_ones
 
-        print(f'For index (run) {i} the updated list is: ', updated_list)
-        print('updated list.... ', updated_list)
+        if len(updated_list) == 1:
+            oxy_rating_bin = updated_list[0]
 
-    oxy_decimal = updated_list[0]
-    return convert_bin_to_decimal(oxy_decimal)
+    oxy_decimal = convert_bin_to_decimal(oxy_rating_bin)
+    return oxy_decimal
 
+
+def find_co2_rate(lst):
+    """
+        Takes in a list of binary numbers as strings of the same length, performs processing based on
+        most common bit criteria and outputs a decimal number representation of the last standing number
+        as an int.
+    """
+    
+    list_length = len(lst[0])
+    updated_list = lst
+    co2_rating_bin = None
+
+    for i in range(list_length):
+        lst_zeroes = []
+        lst_ones = []
+
+        for binary_num in updated_list:
+            if binary_num[i] == "0":
+                lst_zeroes.append(binary_num)
+            else:
+                lst_ones.append(binary_num)
+
+        if len(lst_zeroes) == len(lst_ones):
+            updated_list = lst_zeroes # Keep list with zero for co2 rating
+        else:
+            if len(lst_zeroes) > len(lst_ones):
+                updated_list = lst_ones
+            else:
+                updated_list = lst_zeroes
+
+        if len(updated_list) == 1:
+            co2_rating_bin = updated_list[0]
+
+    co2_decimal = convert_bin_to_decimal(co2_rating_bin)
+    return co2_decimal
 
 oxy_rate = find_oxy_rate(full_bin_list)
-# co2_rate = find_co2_rate(full_bin_list)
+co2_rate = find_co2_rate(full_bin_list)
 
-print('original function: ', find_oxy_rate(full_bin_list))
-
-
-# First run through, keep:
-# 11110, 10110, 10111, 10101, 11100, 10000, and 11001.
-
-# Second run through, keep numbers with 0 in 2nd:
-# 10110, 10111, 10101, and 10000
+life_support_rating = oxy_rate * co2_rate
+print('life support rating: ', life_support_rating)
