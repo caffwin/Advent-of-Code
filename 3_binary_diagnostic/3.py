@@ -1,17 +1,7 @@
-# Use the given report to generate a "gamma rate" and "epsilon rate" - each a binary number
-# The power consumption can be calculated by multiplying these two numbers
-
-# Each digit in a binary number is a bit. The number 1010110 is represented by 7 bits.
-
-# Each bit in the gamma rate can be determined by finding the most common bit in the corresponding position 
-#  of all numbers in the diagnostic report. For example, given the following diagnostic report (test_file)
-
-# Test file - 12 rows
+# 3 Binary Diagnostic
 
 gamma_rate_lst = []
 
-# Generates diagnostic report from input file into list
-# with open('puzzle_input.txt') as file: # For answer submission 
 with open('puzzle_input.txt') as file:
     lines = file.readlines()    
     for line in lines:
@@ -25,11 +15,9 @@ def find_gamma_rate(lst):
     """
     
     output_num = ""
-    # Iterate through each element in list
     binary_length = len(lst[0])
 
     for i in range(binary_length):
-        most_common = 0
         num_zeroes = 0
         num_ones = 0
         for binary_num in lst:
@@ -37,14 +25,6 @@ def find_gamma_rate(lst):
                 num_zeroes += 1
             else:
                 num_ones += 1
-
-        # print("num_zeroes: ", num_zeroes)
-        # print("num_ones: ", num_ones)
-
-        # if num_zeroes > num_ones:
-        #     output_num += "0"
-        # else:
-        #     output_num += "1"
 
         output_num += "0" if num_zeroes > num_ones else "1"
 
@@ -62,10 +42,7 @@ def find_epsilon_rate(gamma_rate):
 def change_rate_to_decimal(rate):
     return int(rate, 2)
 
-# print('gamma_rate_lst: ', str(len(gamma_rate_lst)))
-# print("Gamma rate: ", change_rate_to_decimal(find_gamma_rate(gamma_rate_lst)))
-
-gamma_rate = find_gamma_rate(gamma_rate_lst) # a string
+gamma_rate = find_gamma_rate(gamma_rate_lst)
 
 epsilon_rate = find_epsilon_rate(gamma_rate) 
 print('epsilon_rate: ', epsilon_rate)
