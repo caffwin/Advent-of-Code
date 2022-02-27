@@ -1,9 +1,5 @@
 # Seven segment search part 2
 
-# Seven Segment Search
-
-import numbers
-
 all_outputs = []
 
 # with open('puzzle_input.txt') as file:
@@ -56,9 +52,6 @@ def count_unique_displays(outputs):
     """
         Updated display configuration
     """
-    unique_nums = '1478'
-    segment_list_lengths = []
-    total_unique = 0
 
     # Number of chars -- ex. 5, 2, and 3 all have 5 chars
     # Clump to digit mappings
@@ -93,7 +86,7 @@ def count_unique_displays(outputs):
                     print('checking num: ', num)
                     if check_anagram(char_clump, digit_mapping_dict[num]):
                         print(f'{char_clump} is an anagram of {digit_mapping_dict[num]}!')
-                        char_total += num # should be str but check
+                        char_total += num
                         
         print('char_total: ', char_total)
         output_nums.append(char_total)
