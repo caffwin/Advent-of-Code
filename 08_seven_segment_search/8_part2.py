@@ -53,8 +53,6 @@ def calculate_output_sum(char_set_list, segment_dict):
 def sum_difference(a, b):
     return a + b, a - b
 
-sum, difference = sum_difference(5, 6)
-
 def parse_input_line(line):
     """
         Returns pair of input_list, output_list
