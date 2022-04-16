@@ -87,8 +87,8 @@ def run(test_input):
             # 1, 4, 7, 8 where 8 is unused
 
             # Assign digits with unique number of segments as keys and the corresponding set from the input_list as the value to mapping_dict
-            map_unique_length_digits(mapping_dict, input_list)
-            
+            map_unique_length_digits(input_list, mapping_dict)
+
             top_segment = mapping_dict[7] - mapping_dict[1]
             segment_dict[SegmentEnum.TOP] = top_segment.pop()
 
