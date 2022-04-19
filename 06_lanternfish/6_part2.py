@@ -54,4 +54,4 @@ def calc_lanternfish_growth(initial_state_list, num_days):
 
     return "Lantern fish count: " + str(count_lanternfish(initial_state_list))
 
-print('calc_lanternfish_growth after 1 days: ', calc_lanternfish_growth(lanternfish_state_list_initial, NUM_DAYS))
+print(f'calc_lanternfish_growth after {NUM_DAYS} days: ', calc_lanternfish_growth(lanternfish_state_list_initial, NUM_DAYS))
