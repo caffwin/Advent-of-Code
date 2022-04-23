@@ -4,13 +4,10 @@ TEST_INPUT_FILE = 'puzzle_input.txt'
 
 class Parser():
     """
-        Processes input into a heightmap
+        Parses input into a heightmap
         Class attributes:
         input_file (str)
         heightmap (list of lists)
-
-        Helper functions:
-        Parses input into heightmap
     """
 
     def __init__(self, input_file, heightmap=None):
@@ -19,6 +16,10 @@ class Parser():
 
     def heightmap(self):
         return self.heightmap
+
+    """
+        Helper functions:
+    """
 
     def parse_input_file(self):
         """
