@@ -11,6 +11,7 @@ with open('puzzle_input.txt') as file:
             row_lst.append(column_value)
         HEIGHTMAP.append(row_lst)
 
+print(HEIGHTMAP)
 
 def calc_risk_level(low_point_list):
     """
@@ -22,19 +23,6 @@ def calc_risk_level(low_point_list):
         risk_level_sum += low_point
 
     return risk_level_sum
-
-
-# def pp_matrix(heightmap):
-#     'pretty printing HEIGHTMAP: \n'
-
-#     for row in heightmap:
-#         print(str(row) + '\n')
-    
-# print(pp_matrix(HEIGHTMAP))
-
-# Main run function: takes in a list of lists (matrix of heightmap) 
-# Iterate through each element in each row and check if adjacent coordinates are within bounds of grid
-# If coordinate is "valid", access that element in the heightmap and append it to a list, "lowest_points"
 
 def calc_sum_risk_level(heightmap_matrix):
     low_point_value_list = []
