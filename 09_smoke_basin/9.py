@@ -5,7 +5,6 @@ HEIGHTMAP = []
 
 with open('puzzle_input.txt') as file:
     for row in file:
-        # print('**' + row + '**')
         stripped_row = row.strip()
         row_lst = []
         for column_value in stripped_row:
@@ -25,13 +24,13 @@ def calc_risk_level(low_point_list):
     return risk_level_sum
 
 
-def pp_matrix(heightmap):
-    'pretty printing HEIGHTMAP: \n'
+# def pp_matrix(heightmap):
+#     'pretty printing HEIGHTMAP: \n'
 
-    for row in heightmap:
-        print(str(row) + '\n')
+#     for row in heightmap:
+#         print(str(row) + '\n')
     
-print(pp_matrix(HEIGHTMAP))
+# print(pp_matrix(HEIGHTMAP))
 
 # Main run function: takes in a list of lists (matrix of heightmap) 
 # Iterate through each element in each row and check if adjacent coordinates are within bounds of grid
@@ -54,8 +53,8 @@ def calc_sum_risk_level(heightmap_matrix):
                 if 0 <= coord_pair[0] < len(heightmap_matrix) and 0 <= coord_pair[1] < len(row):
                     valid_adjacent_coords.append(coord_pair)
                     adjacent_coordinate_values.append(HEIGHTMAP[coord_pair[0]][coord_pair[1]])
-                else:
-                    print('coord pair filtered out: ', coord_pair)
+                # else:
+                #     print('coord pair filtered out: ', coord_pair)
                   
             num_valid_coords = 0
 
@@ -71,8 +70,3 @@ def calc_sum_risk_level(heightmap_matrix):
     return risk_level
 
 print(calc_sum_risk_level(HEIGHTMAP))
-
-
-# Expected low points: 1, 0, 5, 5
-# Expected nums to sum: 2, 1, 6, 6
-# Expected risk level: 15
