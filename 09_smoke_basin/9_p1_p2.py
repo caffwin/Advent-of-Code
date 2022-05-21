@@ -17,9 +17,19 @@ class HeightMapAnalyzer():
     low_points (list of tuples (row, column))
     """
 
-    def __init__(self, heightmap=None, low_points=[]):
-        self.heightmap = heightmap
-        self.low_points = low_points
+    def __init__(self, file_name): # class coputes low points
+        self.heightmap = self.CalcHeightmap(file_name)
+        self.low_points = self.CalcLowPoints()
+
+    def CalcHeightmap(self, file_name):
+        with open(file_name) as file:
+            self.heightmap = []
+            for row in file:
+                stripped_row = row.strip()
+                row_lst = []
+                for column_value in stripped_row:
+                    row_lst.append(int(column_value))
+                self.heightmap.append(row_lst)
 
     # Public functions:        
     def CalcLowPoints(self):
@@ -107,18 +117,7 @@ class HeightMapAnalyzer():
         return sum_top_3_basin_sizes
 
 def main():
-    height_map_analyzer = HeightMapAnalyzer()
-    
-    with open(INPUT_FILENAME) as file:
-        height_map_analyzer.heightmap = []
-        for row in file:
-            stripped_row = row.strip()
-            row_lst = []
-            for column_value in stripped_row:
-                row_lst.append(int(column_value))
-            height_map_analyzer.heightmap.append(row_lst)
-
-    low_points = height_map_analyzer.CalcLowPoints() # user isn't doing anything with low points -- should be class responsibility
+    height_map_analyzer = HeightMapAnalyzer(INPUT_FILENAME)
 
     # # Part 1
     part_one_solution = height_map_analyzer.CalcPartOneSolution()
