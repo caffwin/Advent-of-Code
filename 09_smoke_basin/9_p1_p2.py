@@ -11,23 +11,22 @@ class HeightMapAnalyzer():
     
     Additional helper functions calculate risk level and basin size to find the solution for parts 1 and 2.
 
-    Class attributes:
+    Class member variables:
     input_file (str)
-    heightmap (list of lists)
+    heightmap (list of list of ints)
+    low_points (list of tuples (row, column))
     """
 
-    def __init__(self, heightmap=None):
+    def __init__(self, heightmap=None, low_points=[]):
         self.heightmap = heightmap
+        self.low_points = low_points
 
-    """
-    Public functions:
-    """
-        
+    # Public functions:        
     def CalcLowPoints(self):
         """
         Returns a list of coordinates of low points (tuples) from a heightmap matrix.
         """
-        low_point_coords = []
+        self.low_points = []
 
         for r in range(len(self.heightmap)):
             row = self.heightmap[r]
@@ -50,23 +49,22 @@ class HeightMapAnalyzer():
                         num_valid_coords += 1
 
                 if num_valid_coords == len(valid_adjacent_coords):
-                    low_point_coords.append((r, c))
+                    self.low_points.append((r, c))
             
-        return low_point_coords
+        return self.low_points
 
-    def CalcPartOneSolution(self, low_points):
+    def CalcPartOneSolution(self):
         """
         Risk level is the sum of each (low point + 1).
         """
-
         risk_level_sum = 0
 
-        for low_point in low_points:
+        for low_point in self.low_points:
             risk_level_sum += self.heightmap[low_point[0]][low_point[1]] + 1
 
         return risk_level_sum
 
-    def CalcBasinSizes(self, current_coord, visited_set=set()):
+    def CalcBasinSize(self, current_coord, visited_set=set()):
         """
         Starts with single pair (low point coords) as input, finding valid adjacent value coordinates based on recursive case criteria and returns basin size.
         Recursive case: valid adjacent value, within indexes of matrix, --> increments basin_size by one.
@@ -89,25 +87,28 @@ class HeightMapAnalyzer():
 
         for adj_coord in valid_adjacent_coords:
             if adj_coord not in visited_set:
-                basin_sum += self.CalcBasinSizes(adj_coord, visited_set)
+                basin_sum += self.CalcBasinSize(adj_coord, visited_set)
 
         return basin_sum
 
-    def CalcPartTwoSolution(self, low_points):
+    def CalcPartTwoSolution(self):
+        """
+        Calculates sum of three largest basins (assumes there are at least 3 basins). 
+        """
         visited_set = set()
         basin_size_list = []
 
-        for low_point_coord in low_points:
-            basin_size_list.append(self.CalcBasinSizes(low_point_coord, visited_set))
+        for low_point_coord in self.low_points:
+            basin_size_list.append(self.CalcBasinSize(low_point_coord, visited_set))
 
         sorted_basin_size_list = sorted(basin_size_list)
-        sum_top_3_basin_sizes = sorted_basin_size_list[-1] * sorted_basin_size_list[-2] * sorted_basin_size_list[-3]
+        sum_top_3_basin_sizes = sum(sorted_basin_size_list[-3:])
 
         return sum_top_3_basin_sizes
 
 def main():
     height_map_analyzer = HeightMapAnalyzer()
-
+    
     with open(INPUT_FILENAME) as file:
         height_map_analyzer.heightmap = []
         for row in file:
@@ -117,15 +118,18 @@ def main():
                 row_lst.append(int(column_value))
             height_map_analyzer.heightmap.append(row_lst)
 
-    low_points = height_map_analyzer.CalcLowPoints()
+    low_points = height_map_analyzer.CalcLowPoints() # user isn't doing anything with low points -- should be class responsibility
 
     # # Part 1
-    part_one_solution = height_map_analyzer.CalcPartOneSolution(low_points)
+    part_one_solution = height_map_analyzer.CalcPartOneSolution()
     print(f'Part 1 Solution: {part_one_solution}')
 
     # # Part 2
-    part_two_solution = height_map_analyzer.CalcPartTwoSolution(low_points)
+    part_two_solution = height_map_analyzer.CalcPartTwoSolution()
     print(f'Part 2 Solution: {part_two_solution}')
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
+
+# Part 1 Solution: 633
+# Part 2 Solution: 1050192
