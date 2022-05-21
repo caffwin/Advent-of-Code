@@ -17,27 +17,29 @@ class HeightMapAnalyzer():
     low_points (list of tuples (row, column))
     """
 
-    def __init__(self, file_name): # class coputes low points
+    def __init__(self, file_name):
         self.heightmap = self.CalcHeightmap(file_name)
         self.low_points = self.CalcLowPoints()
 
     def CalcHeightmap(self, file_name):
+        heightmap = []
+
         with open(file_name) as file:
-            self.heightmap = []
             for row in file:
                 stripped_row = row.strip()
                 row_lst = []
                 for column_value in stripped_row:
                     row_lst.append(int(column_value))
-                self.heightmap.append(row_lst)
+                    heightmap.append(row_lst)
+
+        return heightmap
 
     # Public functions:        
     def CalcLowPoints(self):
         """
         Returns a list of coordinates of low points (tuples) from a heightmap matrix.
         """
-        self.low_points = []
-
+        low_points = []
         for r in range(len(self.heightmap)):
             row = self.heightmap[r]
             for c in range(len(row)):
@@ -59,9 +61,9 @@ class HeightMapAnalyzer():
                         num_valid_coords += 1
 
                 if num_valid_coords == len(valid_adjacent_coords):
-                    self.low_points.append((r, c))
-            
-        return self.low_points
+                    low_points.append((r, c))
+
+        return low_points
 
     def CalcPartOneSolution(self):
         """
