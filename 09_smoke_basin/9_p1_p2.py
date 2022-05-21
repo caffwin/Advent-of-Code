@@ -66,7 +66,7 @@ class HeightMapAnalyzer():
 
         return risk_level_sum
 
-    def CalcBasinSizes(self, current_coord, visited_set):
+    def CalcBasinSizes(self, current_coord, visited_set=set()):
         """
         Starts with single pair (low point coords) as input, finding valid adjacent value coordinates based on recursive case criteria and returns basin size.
         Recursive case: valid adjacent value, within indexes of matrix, --> increments basin_size by one.
@@ -105,24 +105,27 @@ class HeightMapAnalyzer():
 
         return sum_top_3_basin_sizes
 
+def main():
+    height_map_analyzer = HeightMapAnalyzer()
 
-height_map_analyzer = HeightMapAnalyzer()
+    with open(INPUT_FILENAME) as file:
+        height_map_analyzer.heightmap = []
+        for row in file:
+            stripped_row = row.strip()
+            row_lst = []
+            for column_value in stripped_row:
+                row_lst.append(int(column_value))
+            height_map_analyzer.heightmap.append(row_lst)
 
-with open(INPUT_FILENAME) as file:
-    height_map_analyzer.heightmap = []
-    for row in file:
-        stripped_row = row.strip()
-        row_lst = []
-        for column_value in stripped_row:
-            row_lst.append(int(column_value))
-        height_map_analyzer.heightmap.append(row_lst)
+    low_points = height_map_analyzer.CalcLowPoints()
 
-low_points = height_map_analyzer.CalcLowPoints()
+    # # Part 1
+    part_one_solution = height_map_analyzer.CalcPartOneSolution(low_points)
+    print(f'Part 1 Solution: {part_one_solution}')
 
-# # Part 1
-part_one_solution = height_map_analyzer.CalcPartOneSolution(low_points)
-print(f'Part 1 Solution: {part_one_solution}')
-
-# # Part 2
-part_two_solution = height_map_analyzer.CalcPartTwoSolution(low_points)
-print(f'Part 2 Solution: {part_two_solution}')
+    # # Part 2
+    part_two_solution = height_map_analyzer.CalcPartTwoSolution(low_points)
+    print(f'Part 2 Solution: {part_two_solution}')
+    
+if __name__ == "__main__":
+    main()
