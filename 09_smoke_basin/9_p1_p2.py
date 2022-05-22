@@ -1,4 +1,3 @@
-
 # Day 9 - Smoke Basin
 
 INPUT_FILENAME = 'puzzle_input.txt'
@@ -30,7 +29,7 @@ class HeightMapAnalyzer():
                 row_lst = []
                 for column_value in stripped_row:
                     row_lst.append(int(column_value))
-                    heightmap.append(row_lst)
+                heightmap.append(row_lst)
 
         return heightmap
 
@@ -105,18 +104,18 @@ class HeightMapAnalyzer():
 
     def CalcPartTwoSolution(self):
         """
-        Calculates sum of three largest basins (assumes there are at least 3 basins). 
+        Calculates product of three largest basins (assumes there are at least 3 basins). 
         """
         visited_set = set()
         basin_size_list = []
-
+        
         for low_point_coord in self.low_points:
             basin_size_list.append(self.CalcBasinSize(low_point_coord, visited_set))
 
         sorted_basin_size_list = sorted(basin_size_list)
-        sum_top_3_basin_sizes = sum(sorted_basin_size_list[-3:])
+        product_top_3_basin_sizes = sorted_basin_size_list[-3] * sorted_basin_size_list[-2] * sorted_basin_size_list[-1]
 
-        return sum_top_3_basin_sizes
+        return product_top_3_basin_sizes
 
 def main():
     height_map_analyzer = HeightMapAnalyzer(INPUT_FILENAME)
@@ -131,6 +130,3 @@ def main():
     
 if __name__ == '__main__':
     main()
-
-# Part 1 Solution: 633
-# Part 2 Solution: 1050192
