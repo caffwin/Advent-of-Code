@@ -1,7 +1,16 @@
-# Day 12 Passage Pathing
+# 12 Passage Pathing
 
 TEST_FILE_NAME = 'test_input.txt'
 PUZZLE_INPUT_FILE = 'puzzle_input.txt'
+
+
+class Node():
+    def __init__(self, is_big_cave=False, adj_nodes=[]):
+        self.is_big_cave = is_big_cave
+        self.adj_nodes = adj_nodes
+
+    def return_adj_nodes(self):
+        return self.adj_nodes
 
 def parse_edges_from_input(file_name):
     """
@@ -27,22 +36,11 @@ def parse_edges_from_input(file_name):
 
     return vertices, edges
 
-def create_vertex_dict(vertices):
-    """
-    Vertex dict that describes mapping from indices to vertex names.
-    """
-    vertex_dict = {}
-    for i, vertex in enumerate(vertices):
-        vertex_dict[vertex] = i
-
-    return vertex_dict
-
 def initialize_adj_dict(vertices):
     adj_dict = {}
     for vertex in vertices:
         adj_dict[vertex] = []
     return adj_dict
-
 
 def create_adjacency_dict(vertices, edges):
     adj_dict = initialize_adj_dict(vertices) # A dict containing vertices as keys and empty lists as values
@@ -53,40 +51,6 @@ def create_adjacency_dict(vertices, edges):
 
     return adj_dict
 
-# def create_adjacency_matrix(vertex_dict, edge_set):
-#     """
-#     Creates an adjacency matrix using 
-#     Takes in edges (a set of tuples) and dict of indexed vertices
-
-#     Row (r) and column (c) values represent 
-#     # Checks through 
-#     """
-    
-#     dict_length = len(vertex_dict)
-#     adj_matrix = []
-
-#     # Create matrix with length and width equal to number of vertices 
-#     for num_r in range(dict_length):
-#         row = []
-#         for num_c in range(dict_length):
-#             row.append(0)
-#         adj_matrix.append(row)
-
-#     # Mark coordinates for adjacent pairs in matrix
-#     for edge_pair in edge_set:
-#         r = vertex_dict[edge_pair[0]]
-#         c = vertex_dict[edge_pair[1]]
-#         adj_matrix[r][c] = 1
-#         adj_matrix[c][r] = 1
-
-#     return adj_matrix
-
-
-def check_if_adjacent():
-    # if r, c in adj_dict or c, r in adj_dict then ...
-    return True
-    # else, return False
-
 def part_one_solution(adj_dict, start_node):
     """
     Takes in a unique list of vertices and edges (set of tuples) and performs graph traversal (DFS? expand later) to find the total number of
@@ -96,31 +60,43 @@ def part_one_solution(adj_dict, start_node):
     Paths must start at start, and end at end.
     """
 
+    stack = [start_node] # always start node, ['start']
     invalid_vertices = [] # Includes small caves that have been traversed through already and start vertex
-    unique_sequences = set()
+    num_unique_sequences = 0
 
-    
-    # islower() and isupper()
+    while len(stack) > 0:
 
+        current_node = stack.pop() # 'start'
+        print('current node: ', current_node)
+        adj_nodes = adj_dict[current_node]
+        if current_node.islower():
+            invalid_vertices.append(current_node)
 
-    # Chceck which other vertices are adjacent, and if it's not in traversed_small_caves, continue searching through matrix?
-    # Mark off small caves that have already been traversed through, only nodes that are not in here can be traversed
+        for adj_node in adj_nodes:
+            if adj_node not in invalid_vertices:
+                stack.append(adj_node)
+            
+            if adj_node == 'end':
+                num_unique_sequences += 1
+            print('current stack: ', stack)
 
-    # Challenges: 
-    # Recording all of the valid route sequences, excluding routes that don't end on "end"
-    # Making sure start node is not traversed through after first move
-    # Potential for recomputation if there's no way to validate the path until it's complete and added to the sequence
-
-    # unique_paths = len(set_paths)
-    return # unique_paths
+    return num_unique_sequences
 
 
 def main():
     vertices, edges = parse_edges_from_input(TEST_FILE_NAME)
     adj_dict = create_adjacency_dict(vertices, edges)
-    # Create edges...  
-    start_node = 'start' # always starts here
 
+    # test_adj_dict = {
+    #     'a': ['b', 'c'],
+    #     'b': ['d'],
+    #     'c': ['e'],
+    #     'd': ['f'],
+    #     'e': [],
+    #     'f': []
+    # }
+    start_node = 'start' # always starts here
+    print('*** adj_dict: ', adj_dict)
     print('part one solution: ', part_one_solution(adj_dict, 'start'))
 
     return
