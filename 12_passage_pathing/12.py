@@ -20,7 +20,7 @@ def parse_edges_from_input(file_name):
     """
 
     vertices = []
-    edges = set()
+    edges = []
 
     with open(file_name) as file:
         for line in file:
@@ -32,7 +32,7 @@ def parse_edges_from_input(file_name):
             if vertex_two not in vertices:
                 vertices.append(vertex_two)
 
-            edges.add((vertex_one, vertex_two))
+            edges.append((vertex_one, vertex_two))
 
     return vertices, edges
 
@@ -44,7 +44,6 @@ def initialize_adj_dict(vertices):
 
 def create_adjacency_dict(vertices, edges):
     adj_dict = initialize_adj_dict(vertices) # A dict containing vertices as keys and empty lists as values
-    # Populate adj_dict:
     for edge in edges:
         adj_dict[edge[0]].append(edge[1])
         adj_dict[edge[1]].append(edge[0])
@@ -60,7 +59,7 @@ def part_one_solution(adj_dict, start_node):
     Paths must start at start, and end at end.
     """
 
-    stack = [start_node] # always start node, ['start']
+    stack = [start_node] # always initialize to start node
     invalid_vertices = [] # Includes small caves that have been traversed through already and start vertex
     num_unique_sequences = 0
 
@@ -69,16 +68,25 @@ def part_one_solution(adj_dict, start_node):
         current_node = stack.pop() # 'start'
         print('current node: ', current_node)
         adj_nodes = adj_dict[current_node]
-        if current_node.islower():
+        print('adj_nodes: ', adj_dict[current_node])
+        if current_node.islower() and current_node != 'end': # Can this even happen if "end" nodes never make it in the stack?  
+            print('adding to invalid_vertices: ', current_node)
             invalid_vertices.append(current_node)
+        else:
+            print(current_node, 'is a big cave')
 
         for adj_node in adj_nodes:
-            if adj_node not in invalid_vertices:
+            print('Checking adj nodes and entering for loop.... adj_node is: ', adj_node)
+            if adj_node not in invalid_vertices and adj_node != 'end': # Add node if not invalid
+                print('adding node: ', adj_node)
                 stack.append(adj_node)
-            
+
             if adj_node == 'end':
                 num_unique_sequences += 1
-            print('current stack: ', stack)
+                print('adding one to unique sequences')
+
+        print('invalid vertices: ', invalid_vertices)
+        print('current stack: ', stack)
 
     return num_unique_sequences
 
@@ -104,3 +112,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# *** adj_dict:  {'start': ['b', 'A'], 'A': ['b', 'end', 'start', 'c'], 'b': ['start', 'A', 'end', 'd'], 'c': ['A'], 'd': ['b'], 'end': ['b', 'A']}
+# *** adj_dict:  {'start': ['b', 'A'], 'A': ['c', 'start', 'b', 'end'], 'b': ['d', 'start', 'end', 'A'], 'c': ['A'], 'd': ['b'], 'end': ['b', 'A']}
+# *** adj_dict:  {'start': ['A', 'b'], 'A': ['b', 'start', 'c', 'end'], 'b': ['A', 'd', 'end', 'start'], 'c': ['A'], 'd': ['b'], 'end': ['b', 'A']} # 5
+# *** adj_dict:  {'start': ['A', 'b'], 'A': ['start', 'b', 'c', 'end'], 'b': ['end', 'd', 'A', 'start'], 'c': ['A'], 'd': ['b'], 'end': ['b', 'A']} # 7
+# *** adj_dict:  {'start': ['b', 'A'], 'A': ['c', 'start', 'end', 'b'], 'b': ['start', 'end', 'd', 'A'], 'c': ['A'], 'd': ['b'], 'end': ['b', 'A']} # 11
