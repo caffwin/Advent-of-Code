@@ -1,11 +1,8 @@
 # 12 Passage Pathing
-from tkinter import BOTTOM
-from turtle import end_fill
 from typing import Dict, List, Tuple
 
 TEST_FILE_NAME = 'test_input.txt'
 PUZZLE_INPUT_FILE = 'puzzle_input.txt'
-
 
 class Node:
     '''
@@ -87,10 +84,11 @@ def dfs_paths_iterative(root_node):
 
         current_node = stack.pop()
         current_path.append(current_node)
+        visited_nodes.add(current_node)
         unvisited_neighbors = set(current_node.neighbors) - visited_nodes # a set
-
-        if current_node.return_value() != 'end': # and current_node.return_value().islower():
-            visited_nodes.add(current_node)
+        
+        # if current_node.return_value() != 'end': # and current_node.return_value().islower():
+            # visited_nodes.add(current_node)
 
         if current_node.return_value() == 'end': # Behaviour only for end node
             total_paths += 1
