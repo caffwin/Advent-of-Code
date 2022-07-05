@@ -79,13 +79,15 @@ def dfs_paths_iterative_basic(root_node):
     Add neighbors to current path
     """
     total_paths = 0
-    fringe_stack = [root_node] # nodes that will be explored [frontier or fringe]
+    fringe_stack = [(root_node, [root_node])]
+    # fringe_stack = [root_node] # nodes that will be explored [frontier or fringe]
     current_path = []
     visited_nodes = set()
     
     while len(fringe_stack) > 0:
-        current_node = fringe_stack.pop()
-        current_path.append(current_node)
+        # current_node = fringe_stack.pop()
+        # current_path.append(current_node)
+        current_node, current_path = fringe_stack.pop()
         visited_nodes.add(current_node)
         unvisited_neighbors = set(current_node.neighbors) - visited_nodes # a set
 
@@ -99,10 +101,8 @@ def dfs_paths_iterative_basic(root_node):
                 print('Checking neighbor: ', neighbor.get_value()) # neighbor is a node
                 if neighbor in unvisited_neighbors:
                     print('neighbor in unvisited nodes, adding to stack: ', neighbor.get_value())
-                    fringe_stack.append(neighbor)
-            # else:
-            #     print('neighbor has been visited: ', neighbor.get_value())
-            #     # total_paths += 1
+                    # fringe_stack.append(neighbor)
+                    fringe_stack.append((neighbor, list(current_path)))
                 
         else: # When there are no neighbors
             total_paths += 1
