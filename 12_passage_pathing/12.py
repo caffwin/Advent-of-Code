@@ -88,8 +88,10 @@ def dfs_paths_iterative_basic(root_node):
         # current_node = fringe_stack.pop()
         # current_path.append(current_node)
         current_node, current_path = fringe_stack.pop()
-        visited_nodes.add(current_node)
-        unvisited_neighbors = set(current_node.neighbors) - visited_nodes # a set
+        # visited_nodes.add(current_node)
+        visited_nodes = current_path
+        unvisited_neighbors = set(current_node.neighbors) - set(visited_nodes) # a set
+        visited_nodes.append(current_node)
 
         # if current_node.return_value().isupper():
         # print('reached end, current path: ', [repr(node) for node in current_path])
@@ -108,7 +110,6 @@ def dfs_paths_iterative_basic(root_node):
             total_paths += 1
             print([repr(node) for node in current_path])
             current_path.pop()
-
 
     return total_paths
 
