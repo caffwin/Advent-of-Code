@@ -17,10 +17,10 @@ class Node:
     def __repr__(self):
         return self.value
 
-    def return_value(self):
+    def get_value(self):
         return self.value
 
-    def return_neighbors(self):
+    def get_neighbors(self):
         return self.neighbors
 
 def ConnectNodes(node, other_node):
@@ -89,19 +89,27 @@ def dfs_paths_iterative_basic(root_node):
         visited_nodes.add(current_node)
         unvisited_neighbors = set(current_node.neighbors) - visited_nodes # a set
 
-        if current_node.return_value().isupper(): 
-            print('reached end, current path: ', [repr(node) for node in current_path])
-            total_paths += 1
-            current_path.pop() # Remove the end node to make room for other paths
+        # if current_node.return_value().isupper():
+        # print('reached end, current path: ', [repr(node) for node in current_path])
+        # total_paths += 1
+        # current_path.pop() # Remove the end node to make room for other paths
 
-        for neighbor in current_node.neighbors:
-            print('Checking neighbor: ', neighbor.return_value()) # neighbor is a node
-            if neighbor in unvisited_neighbors:
-                print('neighbor in unvisited nodes, adding to stack: ', neighbor.return_value())
-                fringe_stack.append(neighbor)
-            else:
-                print('neighbor has been visited: ', neighbor.return_value())
+        if len(unvisited_neighbors) > 0:
+            for neighbor in current_node.neighbors:
+                print('Checking neighbor: ', neighbor.get_value()) # neighbor is a node
+                if neighbor in unvisited_neighbors:
+                    print('neighbor in unvisited nodes, adding to stack: ', neighbor.get_value())
+                    fringe_stack.append(neighbor)
+            # else:
+            #     print('neighbor has been visited: ', neighbor.get_value())
+            #     # total_paths += 1
                 
+        else: # When there are no neighbors
+            total_paths += 1
+            print([repr(node) for node in current_path])
+            current_path.pop()
+
+
     return total_paths
 
 
