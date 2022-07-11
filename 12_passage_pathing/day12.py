@@ -3,8 +3,7 @@ from logging import root
 from platform import node
 from typing import Dict, List, Tuple
 
-TEST_FILE_NAME = 'test2.txt'
-# TEST_FILE_NAME = 'test_input.txt'
+TEST_FILE_NAME = 'test_input.txt'
 PUZZLE_INPUT_FILE = 'puzzle_input.txt'
 
 class Node:
@@ -93,17 +92,15 @@ def dfs_paths_iterative_basic(root_node):
             for neighbor in current_node.neighbors:
                 if neighbor in unvisited_neighbors or neighbor.get_value().isupper():
                     fringe_stack.append((neighbor, list(current_path)))
-
-    print("total_paths: ", total_paths)
-    return total_paths
+                    
+    return path_list
 
 def main(test_file):
     edges = parse_edges_from_input(test_file)
-    graph_adjacent_pairs = edges # [('start', 'A'), ('start', 'b'), ('A', 'b'), ('b', 'c'), ('A', 'c'), ('c', 'end')]
+    graph_adjacent_pairs = edges
     node_dict = GenerateGraph(graph_adjacent_pairs)
     root_node = node_dict['start']
-    print('result: ', dfs_paths_iterative_basic(root_node))
-    return
+    return dfs_paths_iterative_basic(root_node)
 
 if __name__ == '__main__':
     main(TEST_FILE_NAME)
