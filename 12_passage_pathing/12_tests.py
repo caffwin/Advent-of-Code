@@ -31,11 +31,9 @@ def test_casing():
     print('result: ', result)
 
     if result == expected_result:
-        return "success test 2"
+        return "success test 3"
     else:
-        return "failure test 2"
-
-
+        return "failure test 3"
 
 def main():
     test_start_end()
