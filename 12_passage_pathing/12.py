@@ -64,119 +64,50 @@ def parse_edges_from_input(file_name):
     return edges
 
 def dfs_paths_iterative_basic(root_node):
-    """
-    Use Node class
-    Add node to current_path list
-    Check neighbors and set to variable
-
-
-    Keep checking until letter .isupper(), that's the end node
-    Could record end nodes in a list to ignore those neighbours? But seems dumb because xXxtra storage & too contextual
-
-    If length of unvisited neighbours is 0, we've reached 
-    Unvisited neighbors is current node's neighbours minus visited nodes
-
-    Add neighbors to current path
-    """
+    '''
+    Takes in a root node and prints out all possible paths using iterative depth-first search to the end node
+    
+    Fringe stack contains a tuple, pair of node and the path traversed to get to that node:
+    node (instance of Node class), current_path (list))
+    '''
     total_paths = 0
-    fringe_stack = [(root_node, [root_node])]
-    # fringe_stack = [root_node] # nodes that will be explored [frontier or fringe]
+    fringe_stack = [(root_node, [])]
     current_path = []
     visited_nodes = set()
     
     while len(fringe_stack) > 0:
-        # current_node = fringe_stack.pop()
-        # current_path.append(current_node)
         current_node, current_path = fringe_stack.pop()
-        # visited_nodes.add(current_node)
         visited_nodes = current_path
-        unvisited_neighbors = set(current_node.neighbors) - set(visited_nodes) # a set
         visited_nodes.append(current_node)
 
-        # if current_node.return_value().isupper():
-        # print('reached end, current path: ', [repr(node) for node in current_path])
-        # total_paths += 1
-        # current_path.pop() # Remove the end node to make room for other paths
+        unvisited_neighbors = set(current_node.neighbors) - set(visited_nodes)
 
-        if len(unvisited_neighbors) > 0:
-            for neighbor in current_node.neighbors:
-                print('Checking neighbor: ', neighbor.get_value()) # neighbor is a node
-                if neighbor in unvisited_neighbors:
-                    print('neighbor in unvisited nodes, adding to stack: ', neighbor.get_value())
-                    # fringe_stack.append(neighbor)
-                    fringe_stack.append((neighbor, list(current_path)))
-                
-        else: # When there are no neighbors
+        if current_node.get_value() == 'end':
+            print('*** Reached end, current path: ', [repr(node) for node in current_path])
             total_paths += 1
-            print([repr(node) for node in current_path])
-            current_path.pop()
+
+        else:
+            if len(unvisited_neighbors) == 0:
+                print("No neighbours left..", [repr(node) for node in current_path])
+                current_path.pop()
+            else:
+                for neighbor in current_node.neighbors:
+                    if neighbor in unvisited_neighbors or neighbor.get_value().isupper(): # Covers start-A-b-A-end
+                        print('neighbor in unvisited nodes, adding to stack: ', neighbor.get_value())
+                        fringe_stack.append((neighbor, list(current_path)))
+                    else:
+                        print('neighbour has already been visited, not adding: ', neighbor.get_value())
 
     return total_paths
-
-
-def dfs_paths_iterative(root_node):
-    """
-    Use Node class
-    Add node to current_path list
-    Check neighbors and set to variable
-
-
-    Keep checking until letter .isupper(), that's the end node
-    Could record end nodes in a list to ignore those neighbours? But seems dumb because xXxtra storage & too contextual
-
-    If length of unvisited neighbours is 0, we've reached 
-    Unvisited neighbors is current node's neighbours minus visited nodes
-
-    Add neighbors to current path
-    """
-    total_paths = 0
-    stack = [root_node]
-    current_path = []
-    visited_nodes = set()
-    
-    while len(stack) > 0:
-
-        current_node = stack.pop()
-        current_path.append(current_node)
-        visited_nodes.add(current_node)
-        unvisited_neighbors = set(current_node.neighbors) - visited_nodes # a set
-        
-        # if current_node.return_value() != 'end': # and current_node.return_value().islower():
-            # visited_nodes.add(current_node)
-
-        path_debug = []
-        if current_node.return_value() == 'end': # Behaviour only for end node
-            for node in current_path:
-                path_debug.append(node.return_value())
-            total_paths += 1
-            print('path_debug: ', path_debug)
-            current_path.pop() # Remove the end node to make room for other paths
-
-        else: # If not end node, add visitors
-            for neighbor in current_node.neighbors:
-                if neighbor in unvisited_neighbors:
-                    stack.append(neighbor)
-                else:
-                    print('neighbor has been visited: ', neighbor.return_value())
-
-    return total_paths
-
-# Create another function that is a dfs paths, iterative basic dfs
-# Simplest version of algorithm that has no semantics with nodes and just runs dfs and see if that works
 
 
 def main():
     edges = parse_edges_from_input(TEST_FILE_NAME)
     graph_adjacent_pairs = edges # [('start', 'A'), ('start', 'b'), ('A', 'b'), ('b', 'c'), ('A', 'c'), ('c', 'end')]
-
     node_dict = GenerateGraph(graph_adjacent_pairs)
     root_node = node_dict['start']
-
-    # print(dfs_paths_iterative(root_node))
     print('basic ver: ', dfs_paths_iterative_basic(root_node))
-
     return
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
