@@ -65,7 +65,7 @@ def parse_edges_from_input(file_name):
 
     return edges
 
-def dfs_paths_iterative_basic(root_node):
+def find_total_paths_dfs(root_node):
     '''
     Takes in a root node and prints out all possible paths using iterative depth-first search to the end node
     
@@ -92,15 +92,17 @@ def dfs_paths_iterative_basic(root_node):
             for neighbor in current_node.neighbors:
                 if neighbor in unvisited_neighbors or neighbor.get_value().isupper():
                     fringe_stack.append((neighbor, list(current_path)))
-                    
-    return path_list
+
+    return len(path_list)
 
 def main(test_file):
     edges = parse_edges_from_input(test_file)
     graph_adjacent_pairs = edges
     node_dict = GenerateGraph(graph_adjacent_pairs)
     root_node = node_dict['start']
-    return dfs_paths_iterative_basic(root_node)
+    total_paths = find_total_paths_dfs(root_node)
+    print("Total paths: ", total_paths)
+    return find_total_paths_dfs(root_node)
 
 if __name__ == '__main__':
-    main(TEST_FILE_NAME)
+    main(PUZZLE_INPUT_FILE)
