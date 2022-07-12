@@ -65,6 +65,25 @@ def parse_edges_from_input(file_name):
 
     return edges
 
+def calc_small_cave_visits_per_path(current_path):
+    '''
+    When a node is tracked, 
+
+    Constructs a dict and populates with node if not added
+    If node exists, increments if value is 2 or less
+    '''
+
+    node_path_count_dict = {}
+    for node in current_path:
+        node_value = node.get_value()
+        if node_value.islower() and node_value != 'start' and node_value != 'end':
+            if node_value in node_path_count_dict:
+                node_path_count_dict[node_value] += 1
+            else:
+                node_path_count_dict[node_value] = 1
+            
+    return node_path_count_dict
+
 def find_total_paths_dfs(root_node):
     '''
     Takes in a root node and prints out all possible paths using iterative depth-first search to the end node
@@ -84,13 +103,22 @@ def find_total_paths_dfs(root_node):
         visited_nodes.append(current_node)
         unvisited_neighbors = set(current_node.neighbors) - set(visited_nodes) 
 
+        small_cave_visited_count_dict = calc_small_cave_visits_per_path(current_path)
+        current_node.get_value()
+
         if current_node.get_value() == 'end':
             path_list.append([repr(node) for node in current_path])
             total_paths += 1
 
         else:
             for neighbor in current_node.neighbors:
-                if neighbor in unvisited_neighbors or neighbor.get_value().isupper():
+                neighbor_value = neighbor.get_value()
+                can_visit_tiny_cave = False
+
+                if neighbor_value in small_cave_visited_count_dict and small_cave_visited_count_dict[neighbor_value] < 2 and 2 not in small_cave_visited_count_dict.values():
+                    can_visit_tiny_cave = True
+
+                if neighbor in unvisited_neighbors or neighbor_value.isupper() or can_visit_tiny_cave:
                     fringe_stack.append((neighbor, list(current_path)))
 
     return len(path_list)
