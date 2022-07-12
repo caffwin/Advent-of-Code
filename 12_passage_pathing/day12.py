@@ -104,7 +104,6 @@ def find_total_paths_dfs(root_node):
         unvisited_neighbors = set(current_node.neighbors) - set(visited_nodes) 
 
         small_cave_visited_count_dict = calc_small_cave_visits_per_path(current_path)
-        # print('visited_count_dict: ', small_cave_visited_count_dict)
         current_node.get_value()
 
         if current_node.get_value() == 'end':
@@ -116,14 +115,12 @@ def find_total_paths_dfs(root_node):
                 neighbor_value = neighbor.get_value()
                 can_visit_tiny_cave = False
 
-                if neighbor_value.islower() and neighbor_value in small_cave_visited_count_dict and small_cave_visited_count_dict[neighbor_value] < 2:
+                if neighbor_value in small_cave_visited_count_dict and small_cave_visited_count_dict[neighbor_value] < 2 and 2 not in small_cave_visited_count_dict.values():
                     can_visit_tiny_cave = True
 
                 if neighbor in unvisited_neighbors or neighbor_value.isupper() or can_visit_tiny_cave:
                     fringe_stack.append((neighbor, list(current_path)))
 
-    for path in path_list:
-        print('\n' + str(path))
     return len(path_list)
 
 def main(test_file):
@@ -136,4 +133,4 @@ def main(test_file):
     return find_total_paths_dfs(root_node)
 
 if __name__ == '__main__':
-    main(TEST_FILE_NAME)
+    main(PUZZLE_INPUT_FILE)
