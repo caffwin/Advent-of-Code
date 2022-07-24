@@ -9,12 +9,15 @@ CODE_MATRIX_ROW_COUNT = 5
  
 def parse_input(file_path):
     """
-    Populates matrix row/col values using max x and y coord values
-    Returns...
+    Parses puzzle input and calculates matrix row and column values. 
+    Creates a list of fold instructions and a list of coordinates that represent where dots are marked.
+    
+    Args:
+    file_path (str): Path to puzzle input file
 
-    max_cols, max_rows
-    fold_instructions - a list of tuples (axis, value)
-    all_coords
+    Returns:
+    fold_instructions (list of tuples)
+    all_coords (set of tuples)
     """
     fold_flag = False
     all_coords = set()
@@ -40,7 +43,6 @@ def parse_input(file_path):
                     max_rows = int(y_coord)
     
             else: # fold_flag == True
-                # Append fold directions to fold instructions
                 if line != '\n':
                     direction, value = stripped_line.split('=')
                     if direction[-1] == 'x':
@@ -48,50 +50,8 @@ def parse_input(file_path):
                     if direction[-1] == 'y': # axis is y
                         fold_instructions.append(('y', int(value)))
 
-    # Part 1 solution
-    # return max_cols, max_rows, first_fold_instruction, all_coords
     return fold_instructions, all_coords
 
- 
-def pp_matrix(matrix):
-    for row in matrix:
-        string_row = ''.join(row)
-        print(string_row)
-    return
-
-def build_matrix(rows, cols, coord_list, fold_dict):
-    matrix = []
-
-    fold_dict = {
-        'x': [5],
-        'y': [7]
-    }
-
-    for r in range(rows + 1):
-        row = []
-        for c in range(cols + 1):
-            # For debugging purposes
-            if c in fold_dict['x'] or r in fold_dict['y']:
-                row.append('-')
-            elif (c, r) in coord_list:
-                row.append('#')
-            else:
-                row.append('.')
-        matrix.append(row)
-    
-    return matrix
-
-def build_blank_matrix(rows, cols):
-    matrix = []
-
-    for r in range(rows):
-        row = []
-        for c in range(cols):
-            row.append('.')
-        matrix.append(row)
-    
-    return matrix
- 
 
 def part_one_solution(matrix, all_coords, first_fold_instruction):
     """
@@ -184,25 +144,29 @@ def apply_fold_transformation(all_coords, fold_instruction):
 
 def part_two_solution(all_coords, fold_instructions):
     """
-        Calculates dot count after the first fold instruction.
-        Takes in a marked matrix (list of lists) where folds are marked by dashes '-', a fold_dict containing 
-        one key for each x and y axis folds (list of ints) and returns a pretty printed matrix of the folded 
+        Takes in a set of initial coordinates where dot appear from puzzle input and a list of fold instructions.
+        Returns a list of coordinates representing the final state that reflect the remaining coordinates after all 
+        fold instructions have been applied. The state is modified each time fold transformation logic is executed. 
+        Each state represents the current list of coordinates up to the current set of fold instructions.
 
-        Y folds always take dots below and transform above the line
-        X folds always take dots from the right and transform to left of line
+        Y folds always take dots below and transform above the fold
+        X folds always take dots from the right of the fold and transform them to the left side
 
-        Each state represents the current list of coordinates up to the current set of fold instructions
+        Args:
+        all_coords (set of tuples): A set of coordinates (row, column) that mark where first set of dots appear
+        fold_instructions (list of tuples): Each tuple contains the axis (str) and value (int). Ex. ('y', 7)
+
+        Returns:
+        state (set): A set of coordinates that represents the final state after all fold transformations have been made.
     """
-    
     state = all_coords
 
-    for fold_instruction in fold_instructions: # process one instruction at a time
+    for fold_instruction in fold_instructions:
         state = apply_fold_transformation(state, fold_instruction)
 
     return state
 
-def plot_coords(coords):
-    
+def plot_coords(coords):    
     modified_matrix = []
     for r in range(CODE_MATRIX_ROW_COUNT + 1):
         row = []
