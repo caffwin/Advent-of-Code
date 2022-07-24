@@ -1,6 +1,11 @@
 # Transparent origami
  
 TEST_FILE_PATH = 'puzzle_input.txt'
+
+# Final matrix size:
+CODE_MATRIX_COL_COUNT = 38
+CODE_MATRIX_ROW_COUNT = 5
+
  
 def parse_input(file_path):
     """
@@ -8,20 +13,16 @@ def parse_input(file_path):
     Returns...
 
     max_cols, max_rows
-    first_fold_instruction
+    fold_instructions - a list of tuples (axis, value)
     all_coords
     """
     fold_flag = False
-    all_coords = []
+    all_coords = set()
 
     with open(file_path) as file:
-        x_crease_values = []
-        y_crease_values = []
         max_cols = 0 # x coord max
         max_rows = 0 # y coord max
-
-        first_fold_instruction = {}
-        first_fold_flag = False
+        fold_instructions = []
 
         for line in file:
             stripped_line = line.strip()
@@ -31,7 +32,7 @@ def parse_input(file_path):
     
             if fold_flag == False:
                 x_coord, y_coord = stripped_line.split(',')
-                all_coords.append((int(x_coord), int(y_coord)))
+                all_coords.add((int(x_coord), int(y_coord)))
     
                 if int(x_coord) > max_cols:
                     max_cols = int(x_coord)
@@ -39,24 +40,18 @@ def parse_input(file_path):
                     max_rows = int(y_coord)
     
             else: # fold_flag == True
-                if line != '\n' and first_fold_flag == False:
-                        axis_phrase, value = stripped_line.split('=')
-                        axis = axis_phrase[-1]
-                        first_fold_instruction[axis] = int(value)
-                        first_fold_flag = True # First row only for part 1 solution
+                # Append fold directions to fold instructions
+                if line != '\n':
+                    direction, value = stripped_line.split('=')
+                    if direction[-1] == 'x':
+                        fold_instructions.append(('x', int(value)))
+                    if direction[-1] == 'y': # axis is y
+                        fold_instructions.append(('y', int(value)))
 
-                    # For x and y values
-                    #    if direction[-1] == 'x':
-                    #        x_crease_values.append(int(value))
-                    #    if direction[-1] == 'y': # direction is y
-                    #        y_crease_values.append(int(value))
- 
- 
-        # print('VERTICAL_CREASE_LIST: ', y_crease_values)
-        # print('HORIZONTAL_CREASE_LIST: ', x_crease_values)
+    # Part 1 solution
+    # return max_cols, max_rows, first_fold_instruction, all_coords
+    return fold_instructions, all_coords
 
-    return max_cols, max_rows, first_fold_instruction, all_coords
-#    return max_cols, max_rows, y_crease_values, x_crease_values, all_coords
  
 def pp_matrix(matrix):
     for row in matrix:
@@ -64,41 +59,19 @@ def pp_matrix(matrix):
         print(string_row)
     return
 
-# Old working function
-# def build_matrix(rows, cols, coord_list):
-#     matrix = []
-#     # num_marks = 0
-    
-#     # test_y_fold = 7
-#     # test_x_fold = 5
-#     for r in range(rows + 1):
-#         row = []
-#         for c in range(cols + 1):
-#             # For debugging purposes
-#             # if c == test_x_fold or r == test_y_fold:
-#             #     # print("c matches test x fold")
-#             #     row.append('-')
-#             #     # Under this condition, can start to modify coordinates
-#             # elif (c, r) in coord_list:
-#             if (c, r) in coord_list:
-#                 row.append('#')
-#                 # num_marks += 1 # Also debugging
-#             else:
-#                 row.append('.')
-#         matrix.append(row)   
-#     return matrix
- 
-
-def build_matrix(rows, cols, coord_list):
+def build_matrix(rows, cols, coord_list, fold_dict):
     matrix = []
 
-    test_x_fold = None
-    test_y_fold = 7
+    fold_dict = {
+        'x': [5],
+        'y': [7]
+    }
+
     for r in range(rows + 1):
         row = []
         for c in range(cols + 1):
             # For debugging purposes
-            if c == test_x_fold or r == test_y_fold:
+            if c in fold_dict['x'] or r in fold_dict['y']:
                 row.append('-')
             elif (c, r) in coord_list:
                 row.append('#')
@@ -107,7 +80,19 @@ def build_matrix(rows, cols, coord_list):
         matrix.append(row)
     
     return matrix
+
+def build_blank_matrix(rows, cols):
+    matrix = []
+
+    for r in range(rows):
+        row = []
+        for c in range(cols):
+            row.append('.')
+        matrix.append(row)
+    
+    return matrix
  
+
 def part_one_solution(matrix, all_coords, first_fold_instruction):
     """
         Calculates dot count after the first fold instruction.
@@ -123,13 +108,10 @@ def part_one_solution(matrix, all_coords, first_fold_instruction):
     new_coords_list = []
     modified_matrix = []
     dot_count = 0
+    fold_value = 7 # Hard coding for test
 
-    fold_value = first_fold_instruction['x'] # 7
-    # fold_value = first_fold_instruction['y']
-
-    # Eliminate matrix rows after the fold row:
     if 'y' in first_fold_instruction:
-        transform_coords_list = [coord for coord in all_coords if coord[1] > first_fold_instruction['y']]
+        transform_coords_list = [coord for coord in all_coords if coord[1] > fold_value]
 
         # Process coordinates -- check distance for column value (coord[0])
         for coord in transform_coords_list:
@@ -142,7 +124,7 @@ def part_one_solution(matrix, all_coords, first_fold_instruction):
             modified_matrix.append(matrix[r])
 
     elif 'x' in first_fold_instruction:
-        transform_coords_list = [coord for coord in all_coords if coord[0] > first_fold_instruction['x']] # Take all coords right of line
+        transform_coords_list = [coord for coord in all_coords if coord[0] > fold_value] # first_fold_instruction['x']] # Take all coords right of line
 
         # Process coords
         for coord in transform_coords_list:
@@ -173,15 +155,71 @@ def part_one_solution(matrix, all_coords, first_fold_instruction):
 
     return dot_count
 
+def apply_fold_transformation(all_coords, fold_instruction):
+    transformed_coords_set = set()
+    fold_axis = fold_instruction[0]
+    fold_value = fold_instruction[1]
+
+    if fold_axis == 'y':
+        transform_coords_set = set(coord for coord in all_coords if coord[1] > fold_value)
+        remaining_coords = all_coords - transform_coords_set
+
+        for coord in transform_coords_set:
+            difference = coord[1] - fold_value
+            shifted_value = fold_value - difference
+            transformed_coord = (coord[0], shifted_value)
+            transformed_coords_set.add(transformed_coord)
+            
+    else:
+        transform_coords_set = set(coord for coord in all_coords if coord[0] > fold_value)
+        remaining_coords = all_coords - transform_coords_set
+        for coord in transform_coords_set:
+            difference = coord[0] - fold_value
+            shifted_value = fold_value - difference
+            transformed_coord = (shifted_value, coord[1])
+            transformed_coords_set.add(transformed_coord)
+
+    new_coords_set = transformed_coords_set | remaining_coords
+    return new_coords_set
+
+def part_two_solution(all_coords, fold_instructions):
+    """
+        Calculates dot count after the first fold instruction.
+        Takes in a marked matrix (list of lists) where folds are marked by dashes '-', a fold_dict containing 
+        one key for each x and y axis folds (list of ints) and returns a pretty printed matrix of the folded 
+
+        Y folds always take dots below and transform above the line
+        X folds always take dots from the right and transform to left of line
+
+        Each state represents the current list of coordinates up to the current set of fold instructions
+    """
+    
+    state = all_coords
+
+    for fold_instruction in fold_instructions: # process one instruction at a time
+        state = apply_fold_transformation(state, fold_instruction)
+
+    return state
+
+def plot_coords(coords):
+    
+    modified_matrix = []
+    for r in range(CODE_MATRIX_ROW_COUNT + 1):
+        row = []
+        for c in range(CODE_MATRIX_COL_COUNT + 1):
+            if (c, r) in coords:
+                row.append('#')
+            else:
+                row.append('.')
+        modified_matrix.append(row)
+
+    return modified_matrix
  
 def main():
-    # max_cols, max_rows, y_crease_values, x_crease_values, coord_list = parse_input(TEST_FILE_PATH) # Populates matrix x/y values
-    max_cols, max_rows, first_fold_instruction, coord_list = parse_input(TEST_FILE_PATH) 
-    marked_matrix = build_matrix(max_rows, max_cols, coord_list)
-    print(pp_matrix(marked_matrix))
-    # part_one_solution(marked_matrix, x_crease_values, y_crease_values)
-    print(part_one_solution(marked_matrix, coord_list, first_fold_instruction))
+    fold_instructions, coord_list = parse_input(TEST_FILE_PATH)
+    final_state = part_two_solution(coord_list, fold_instructions) # returns all coords from final state
+    final_state_matrix = plot_coords(final_state)
+    pp_matrix(final_state_matrix) # PGHZBFJC
  
 if __name__ == '__main__':
    main()
-
