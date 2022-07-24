@@ -52,6 +52,11 @@ def parse_input(file_path):
 
     return fold_instructions, all_coords
 
+def pp_matrix(matrix):
+    for row in matrix:
+        string_row = ''.join(row)
+        print(string_row)
+    return
 
 def part_one_solution(matrix, all_coords, first_fold_instruction):
     """
