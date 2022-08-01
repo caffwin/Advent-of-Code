@@ -76,18 +76,38 @@ def part_one_solution(template, insertion_rules, steps):
 ########################## P2 ############################
 
 def calc_most_and_least_common_elements_p2(polymer_dict):
+    """
+        Takes in a polymer_dict (dict) of characters (keys) corresponding to their number of occurences (value), 
+        and uses min/max functions to find the most and least common characters.
+
+        Returns the value (int) of the number of most occuring characters subtracted by the number of least
+        occuring characters.
+    """
     most_frequent_element = max(polymer_dict.values())
     least_frequent_element = min(polymer_dict.values())
     p2_answer = most_frequent_element - least_frequent_element
     return p2_answer
 
 def create_polymer_dict(insertion_rules):
+    """
+        Creates an empty dictionary where the keys (str) represent all possible two-character combinations from 
+        insertion_rules (dict) and the value is the character (str) to be inserted for that pair of elements.
+    """
     pair_dict = {}
     for key in insertion_rules.keys():
         pair_dict[key] = 0
     return pair_dict
 
 def populate_polymer_dict(polymer, polymer_dict):
+    """
+        Takes in a polymer template (str of characters) and polymer_dict (dict) to represent all possible 
+        character combinations from the test input. Populates polymer_dict using the pairs found through
+        iterating over the polymer and returns a modified dict that tracks the number of occurences of
+        these pairs.
+
+        Only used for the initial state to convert the starting polymer into a format that can be further
+        processed.
+    """
     total_pairs = len(polymer) - 1
     for i in range(total_pairs):
         element_pair = str(polymer[i] + polymer[i + 1])
@@ -95,6 +115,11 @@ def populate_polymer_dict(polymer, polymer_dict):
     return polymer_dict
 
 def calc_polymer_state(polymer_state_dict, insertion_rules):
+    """
+        Takes in the current state of a polymer state, finds pairs, and applies insertion rules to
+        produce two new pairs for each pair. Returns a new dict representing the updated state after
+        pair counts have been modified.
+    """
     # Takes in a polymer and returns a polymer dict containing the pairs of elements that will be
     # go through pair insertion process via set of rules defined through polymer_dict
     
@@ -132,11 +157,14 @@ def create_occurence_dict(polymer_dict):
     return template_dict
 
 def part_two_solution(template, insertion_rules, steps):
-    # Represent the current state, then transition to the next state based on a set of rules
+    """
+        Part two solution
+    """
     polymer_dict = create_polymer_dict(insertion_rules)
     initial_state = populate_polymer_dict(template, polymer_dict)
     initial_state_flag = True
 
+    # Represent the current state, then transition to the next state based on a set of rules
     for i in range(steps):
         if initial_state_flag == True:
             current_state = calc_polymer_state(initial_state, insertion_rules)
