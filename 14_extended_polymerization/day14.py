@@ -118,7 +118,7 @@ def create_occurence_dict(polymer_dict):
     template_dict = {}
 
     for key, count in polymer_dict.items():
-        if polymer_dict[key] > 0:
+        if count > 0:
             for char in key:
                 if char not in template_dict:
                     template_dict[char] = 0.5 * count
