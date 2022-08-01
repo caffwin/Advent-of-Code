@@ -1,10 +1,8 @@
 # Day 14 Extended Polymerization
+import math
 
-from concurrent.futures import process
-
-
-INPUT_FILE = 'test_input.txt'
-NUM_STEPS = 3
+INPUT_FILE = 'puzzle_input.txt'
+NUM_STEPS = 40
 
 def parse_input(file_name):
 
@@ -75,11 +73,11 @@ def part_one_solution(template, insertion_rules, steps):
     return p1_answer
 
 
-######################################################
+########################## P2 ############################
+
 def calc_most_and_least_common_elements_p2(polymer_dict):
     most_frequent_element = max(polymer_dict.values())
     least_frequent_element = min(polymer_dict.values())
-
     p2_answer = most_frequent_element - least_frequent_element
     return p2_answer
 
@@ -90,7 +88,6 @@ def create_polymer_dict(insertion_rules):
     return pair_dict
 
 def populate_polymer_dict(polymer, polymer_dict):
-    # Create initial state
     total_pairs = len(polymer) - 1
     for i in range(total_pairs):
         element_pair = str(polymer[i] + polymer[i + 1])
@@ -98,87 +95,67 @@ def populate_polymer_dict(polymer, polymer_dict):
     return polymer_dict
 
 def calc_polymer_state(polymer_state_dict, insertion_rules):
-    print("current state dict passed in - should be same as above: ", polymer_state_dict)
-    # {'CH': 1, 'HH': 0, 'CB': 0, 'NH': 0, 'HB': 1, 'HC': 0, 'HN': 0, 'NN': 0, 'BH': 0, 'NC': 1, 'NB': 1, 'BN': 0, 'BB': 0, 'BC': 1, 'CC': 0, 'CN': 1}
-    # The dict populated as expected
+    # Takes in a polymer and returns a polymer dict containing the pairs of elements that will be
+    # go through pair insertion process via set of rules defined through polymer_dict
     
-    # Isolate keys where the value is greater than 0 into another dict (probably not optimal for storage?):
-    process_pair_values = dict((element_pair, occurrences) for element_pair, occurrences in polymer_state_dict.items() if occurrences > 0)
-    # {'CH': 1, 'HB': 1, 'NC': 1, 'NB': 1, 'BC': 1, 'CN': 1} --> these are the correct pairs to process, only keys with values over 0 are included
-    print('process_pair_values: ', process_pair_values)
-
     blank_dict = create_polymer_dict(insertion_rules)
-    # polymer_dict is a fresh new dict:
-    print('blank dict: ', blank_dict)
+    new_state_dict = blank_dict # blank dict is passed in, maybe not optimal
 
-    new_state_dict = blank_dict # blank dict is passed in
+    # Process pairs and return the next state dict with new pairs
+    for pair, count in polymer_state_dict.items():
+        first_pair = str(pair[0]) + str(insertion_rules[pair])
+        second_pair = str(insertion_rules[pair]) + str(pair[1])
+        new_state_dict[first_pair] += count
+        new_state_dict[second_pair] += count
 
-    new_pair_lst = [] # for debug
-    # Figure out a way to process pairs, and then return updated dict with new pairs
-    for pair in process_pair_values:
-        # print('Number of times we need to add new pairs: ', process_pair_values[pair])
-        # print('pair that is being checked: ', pair)
-        for i in range(process_pair_values[pair]): # For each pair, need to add additional pairs this number of times
-        # Each pair maps to 2 additional pairs after insertion rule is executed
-            print('checking pair: ', pair)
-            first_pair = str(pair[0]) + str(insertion_rules[pair])
-            second_pair = str(insertion_rules[pair]) + str(pair[1])
-            print('first pair: ', first_pair, 'second pair: ', second_pair)
-            new_state_dict[first_pair] += 1
-            new_state_dict[second_pair] += 1
-            new_pair_lst.append(first_pair)
-            new_pair_lst.append(second_pair)
-            # print('adding pairs: ', first_pair, second_pair)
-
-    print('total new pairs to be added to new state: ', len(new_pair_lst))
-    # print('polymer state dict -- this will be passed to the next state: ', new_state_dict)
-    debug_dict = {}
-    # print("****Next set of pairs to check: ", new_pair_lst)
-    for pair in new_pair_lst:
-        if pair not in debug_dict:
-            debug_dict[pair] = 1
-        else:
-            debug_dict[pair] += 1
-    print("debug_dict: ", debug_dict)
-    print('new state: ', new_state_dict)
     return new_state_dict
 
-def part_two_solution(template, insertion_rules, steps):
-    polymer_dict = create_polymer_dict(insertion_rules)
-    
-    # populate for initial state:
-    initial_state = populate_polymer_dict(template, polymer_dict) # Modifies polymer_dict, also need a blank one
-    initial_state_flag = True
-    # print('polymer dict from first function after initial state, should still be blank: ', polymer_dict)
+def create_occurence_dict(polymer_dict):
+    """
+        Takes in a polymer_dict containing element pairs (str, key) and number of occurrences (int, value)
+        Returns a dict representing the number of occurrences (int) of each unique letter (str, single character).
+    """
+    template_dict = {}
 
-    # Takes in a state, and returns the new state based on the current state
+    for key, count in polymer_dict.items():
+        if polymer_dict[key] > 0:
+            for char in key:
+                if char not in template_dict:
+                    template_dict[char] = 0.5 * count
+                else:
+                    template_dict[char] += 0.5 * count
+
+    # Rounding, after values are all populated
+    for key in template_dict:
+        rounded_value = math.ceil(template_dict[key])
+        template_dict[key] = rounded_value
+    return template_dict
+
+def part_two_solution(template, insertion_rules, steps):
+    # Represent the current state, then transition to the next state based on a set of rules
+    polymer_dict = create_polymer_dict(insertion_rules)
+    initial_state = populate_polymer_dict(template, polymer_dict)
+    initial_state_flag = True
+
     for i in range(steps):
-        print("Current step: ", str(i+1))
         if initial_state_flag == True:
             current_state = calc_polymer_state(initial_state, insertion_rules)
             initial_state_flag = False
         else:
-            print('current state passed in before new state is calculated: ', current_state)
             new_state = calc_polymer_state(current_state, insertion_rules)
             current_state = new_state
-    
-    # Convert final state pairs into elements/number of occurrences dict using insertion_rules:
-    occurence_dict = {}
-    for key in current_state:
-        if current_state[key] > 0:
-            if insertion_rules[key] not in occurence_dict:
-                occurence_dict[insertion_rules[key]] = current_state[key] 
-            else:
-                occurence_dict[insertion_rules[key]] += current_state[key] # int value of number of times pair occurs: ex, 16 ---> 
 
-    p2_solution = calc_most_and_least_common_elements_p2(occurence_dict)
-    return p2_solution
+    occurence_dict = create_occurence_dict(current_state)
+    p2_answer = calc_most_and_least_common_elements_p2(occurence_dict)
+    return p2_answer
 
 def main():
     template, insertion_rules = parse_input(INPUT_FILE)
     # p1_answer = part_one_solution(template, insertion_rules, NUM_STEPS)
     # print('Most common element subtracted by least common element is: ', str(p1_answer))
+
     p2_answer = part_two_solution(template, insertion_rules, NUM_STEPS)
     print("p2_answer: ", p2_answer)
+
 if __name__ == '__main__':
     main()
