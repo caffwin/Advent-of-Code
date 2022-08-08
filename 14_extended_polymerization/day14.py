@@ -1,10 +1,22 @@
 # Day 14 Extended Polymerization
 import math
 
-INPUT_FILE = 'puzzle_input.txt'
-NUM_STEPS = 40
+# part 2
+# INPUT_FILE = 'puzzle_input.txt'
+# NUM_STEPS = 40
+
+# part 1
+INPUT_FILE = 'test_input.txt'
+NUM_STEPS = 10
 
 def parse_input(file_name):
+    """
+    Parses puzzle input and returns:
+
+    template (str): The starting polymer template, string of characters
+    insertion_rules (dict): A dictionary of insertion rules where the key is a string of two characters (pair) and the
+    value is the element (single character) to be inserted between the pair.
+    """
 
     with open(file_name) as file:
         template_flag = False
@@ -26,7 +38,10 @@ def parse_input(file_name):
 
     return template, insertion_rules
 
-def calc_most_and_least_common_elements(polymer):
+def calc_p1_solution(polymer):
+    """
+    Takes in a polymer (str of chars) and calculates the quantity of the most and least common element, returning the difference.
+    """
     str_dict = {}
     # Populate str_dict to calculate number of occurrences
     for char in polymer:
@@ -36,7 +51,6 @@ def calc_most_and_least_common_elements(polymer):
             str_dict[char] += 1
     most_frequent_element = max(str_dict.values())
     least_frequent_element = min(str_dict.values())
-
     p1_answer = most_frequent_element - least_frequent_element
     return p1_answer
 
@@ -59,17 +73,13 @@ def perform_pair_insertion(template, insertion_rules):
 
 
 def part_one_solution(template, insertion_rules, steps):
-    new_polymer_placeholder = None
+    new_polymer_placeholder = template
 
     for i in range(steps):
-        if new_polymer_placeholder == None:
-            new_polymer = perform_pair_insertion(template, insertion_rules)
-            new_polymer_placeholder = new_polymer
-        else:
-            new_polymer = perform_pair_insertion(new_polymer_placeholder, insertion_rules)
-            new_polymer_placeholder = new_polymer
+        new_polymer = perform_pair_insertion(new_polymer_placeholder, insertion_rules)
+        new_polymer_placeholder = new_polymer
 
-    p1_answer = calc_most_and_least_common_elements(new_polymer)
+    p1_answer = calc_p1_solution(new_polymer)
     return p1_answer
 
 
@@ -179,8 +189,8 @@ def part_two_solution(template, insertion_rules, steps):
 
 def main():
     template, insertion_rules = parse_input(INPUT_FILE)
-    # p1_answer = part_one_solution(template, insertion_rules, NUM_STEPS)
-    # print('Most common element subtracted by least common element is: ', str(p1_answer))
+    p1_answer = part_one_solution(template, insertion_rules, NUM_STEPS)
+    print('Most common element subtracted by least common element is: ', str(p1_answer))
 
     p2_answer = part_two_solution(template, insertion_rules, NUM_STEPS)
     print("p2_answer: ", p2_answer)
