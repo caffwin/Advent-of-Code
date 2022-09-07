@@ -1,14 +1,12 @@
 # Chiton
 
 TEST_INPUT = 'puzzle_input.txt'
-# TEST_INPUT = 'test_matrix.py'
 MATRIX_MULTIPLIER = 5
 
 class Node():
-    def __init__(self, value: int, coordinates):
+    def __init__(self, value: int):
         self.value = value
         self.neighbors = [] # List of nodes
-        self.coordinates = coordinates
         self.shortest_path_to_self = 999999999999999999999999
 
     def __repr__(self):
@@ -26,9 +24,10 @@ class Node():
 
 def parse_input_to_matrix(file_path):
     '''
+    Args: file_path
     Parses puzzle input and returns:
     
-    matrix: 2D array - list of lists of risk levels (int)
+    matrix: 2D array - list of lists of risk level values (int)
     '''
     matrix = []
     with open(file_path) as file:
@@ -40,6 +39,14 @@ def parse_input_to_matrix(file_path):
 
 
 def find_adjacent_pairs(r, c, matrix):
+    '''
+    Args: row value (int), column value (int), matrix (2D array, list of lists)
+
+    For improved performance, east and south directions are prioritized over north and west
+
+    Returns: valid_adj_nodes (list of Nodes) - Nodes surrounding the current Node in the 
+    cardinal directions that are also within the bounds of the matrix
+    '''
     num_rows = len(matrix)
     adj_coords = [(r+1, c), (r, c+1), (r-1, c), (r, c -1)]
     valid_adj_nodes = []
@@ -49,17 +56,21 @@ def find_adjacent_pairs(r, c, matrix):
             value = matrix[coord[0]][coord[1]]
             neighbor_node = matrix[coord[0]][coord[1]]
             valid_adj_nodes.append(neighbor_node)
+
     return valid_adj_nodes
 
     
 def create_node_matrix(risk_level_matrix):
+    '''
+    Converts 2D array of risk levels into 2D array of Nodes.
+    '''
     node_matrix = []
+
     for r in range(len(risk_level_matrix)):
         row = []
         for c in range(len(risk_level_matrix)):
-            current_coord = (r, c)
             value = risk_level_matrix[r][c]
-            node = Node(value, current_coord)
+            node = Node(value)
             row.append(node)
         node_matrix.append(row)
 
@@ -67,6 +78,9 @@ def create_node_matrix(risk_level_matrix):
 
 
 def create_connections(node_matrix):
+    '''
+    Takes in a Node matrix and populates neighbors for each node.
+    '''
     matrix_row_count = len(node_matrix)
     matrix_col_count = len(node_matrix[0])
     
@@ -78,25 +92,15 @@ def create_connections(node_matrix):
     return
 
 
-def pp_matrix(matrix):
-    for row in matrix:
-        new_row = []
-        for num in row:
-            if len(str(num)) == 1:
-                message = num
-                fill = ' '
-                new_str = f'{message:{fill}}'
-                new_row.append(new_str)
-            else:
-                new_row.append(str(num))
-        print(new_row)
-
 def find_lowest_risk_path_value(matrix, start_node, end_node):
+    '''
+    Explores edges between Nodes to determine the value of the path with the lowest risk cost.
+    Starts at the top left Node in the matrix and ends with the bottom right Node. 
+    '''
     start_node.shortest_path_to_self = matrix[0][0]
     fringe_stack = [start_node] # Initialize with start node
 
     while len(fringe_stack) > 0:
-        print(len(fringe_stack))
         current_node = fringe_stack.pop(0)
         for neighbor in current_node.neighbors:
             check_value = current_node.shortest_path_to_self + neighbor.get_value() 
@@ -110,6 +114,11 @@ def find_lowest_risk_path_value(matrix, start_node, end_node):
 
 
 def increment_matrix_values(matrix):
+    '''
+    Handles incrementing each value of expanded matrices for part 2. 
+    Any value of 9 rolls back down to a 1 when incremented.
+    '''
+
     incremented_matrix = []
     for r in range(len(matrix)):
         row = []
@@ -123,6 +132,14 @@ def increment_matrix_values(matrix):
     return incremented_matrix
 
 def expand_matrix(matrix, multiplier):
+    '''
+    Args: matrix (2D array), multiplier (int)
+    Expands matrix N-fold where N is the value of the multiplier.
+    Ex. a multiplier of 5 will scale the columns and rows 5x the current number,
+    making the map 5x larger.
+    
+    Returns the expanded matrix. 
+    '''
     placeholder_matrix = []
     row_count = len(matrix)
 
@@ -147,7 +164,7 @@ def main():
     matrix = parse_input_to_matrix(TEST_INPUT)
     node_matrix, start_node, end_node = create_node_matrix(matrix)
     create_connections(node_matrix)
-    p1_solution = find_lowest_risk_path_value(matrix, start_node, end_node, node_matrix)
+    p1_solution = find_lowest_risk_path_value(matrix, start_node, end_node)
     print('p1 solution: ', p1_solution)
 
     # Part 2
