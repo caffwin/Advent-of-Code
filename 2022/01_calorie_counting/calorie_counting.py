@@ -20,7 +20,7 @@ def parse_elf_calories_into_dict(TEST_INPUT_FILE):
     return elf_calorie_dict
 
 
-def find_fattest_elf(elf_calorie_dict):
+def calc_most_calories_consumed(elf_calorie_dict):
     """
     Takes in a dictionary and iterates through keys, returns the highest value in the dict (representing number of calories consumed).
     """
@@ -34,11 +34,21 @@ def find_fattest_elf(elf_calorie_dict):
 
     return most_calories_consumed
 
+def calc_sum_top_three_calories_consumed(elf_calorie_dict):
+    dict_to_list = list(elf_calorie_dict.values())
+    dict_to_list.sort(reverse=True)
+    top_three_results = dict_to_list[:3]
+
+    return sum(top_three_results)
+
 
 def run():
     elf_calorie_dict = parse_elf_calories_into_dict(TEST_INPUT_FILE)
-    most_calories_consumed = find_fattest_elf(elf_calorie_dict)
+    most_calories_consumed = calc_most_calories_consumed(elf_calorie_dict)
     print('Part 1 answer: ', most_calories_consumed)
+
+    part_2_answer = calc_sum_top_three_calories_consumed(elf_calorie_dict)
+    print('Part 2 answer: ', part_2_answer)
 
 if __name__ == "__main__":
     run()
