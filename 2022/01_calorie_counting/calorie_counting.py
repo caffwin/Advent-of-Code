@@ -42,5 +42,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-# 130 answer is too low
