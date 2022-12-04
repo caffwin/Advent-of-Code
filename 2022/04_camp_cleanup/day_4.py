@@ -1,5 +1,5 @@
 TEST_INPUT_FILE = 'test_input.txt'
-ASSIGNMENT_PAIR_LIST = [] # a list of list of tuples? 
+ASSIGNMENT_PAIR_LIST = []
 
 def run():
     overlapping_pairs = 0
