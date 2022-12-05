@@ -117,7 +117,7 @@ def run():
     stacks = create_stacks_from_crate_matrix(crate_matrix)
     modified_stacks = perform_stack_calculations(stacks, instructions)
     top_crates = find_top_crates(modified_stacks)
-    print('part one solution: :', ''.join(top_crates))
+    print('part two solution: :', ''.join(top_crates))
     return
 
 if __name__ == "__main__":

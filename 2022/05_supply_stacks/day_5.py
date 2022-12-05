@@ -43,7 +43,7 @@ def parse_input(TEST_INPUT_FILE):
                 new_line_flag = True
             
             # Parse crate contents until new line is reached
-            if new_line_flag == False:
+            if not new_line_flag:
                 crate_contents = list(line[1::4]) # crate contents, every 4th character starting from index 1
                 crate_matrix.append(crate_contents)
             
@@ -90,7 +90,6 @@ def perform_stack_calculations(stacks, instructions):
         destination_stack_index = instruction[2] - 1
         # print('moving... ', num_crates_to_move, 'crate(s) from stack', str(origin_stack_index + 1), ' to stack', str(destination_stack_index + 1))
         for i in range(num_crates_to_move): # specifies number of crates to be moved
-            # not currently using i
             stacks[destination_stack_index].push(stacks[origin_stack_index].pop())
 
     return stacks
