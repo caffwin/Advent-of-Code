@@ -21,7 +21,7 @@ def parse_input():
                 fully_contained_pairs += 1
 
             # Part 2 solution
-            if (int(second_pair_start) > int(first_pair_end)) or (int(first_pair_start) > int(second_pair_end)): # or (int(first_pair_start) > int(second_pair_end) or int(first_pair_end) > int(second_pair_end)):
+            if (int(second_pair_start) > int(first_pair_end)) or (int(first_pair_start) > int(second_pair_end)):
                 not_overlapping_pairs += 1            
 
     return fully_contained_pairs, not_overlapping_pairs, total_lines
