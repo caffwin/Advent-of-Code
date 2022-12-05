@@ -1,0 +1,20 @@
+Iterate through the puzzle input and convert 2D list of ints -> 2D list of Nodes 
+Node class has member variables: value (at each node, to be summed), neighbors (list of nodes), current shortest path cost to the node (default infinity)
+
+Helper function (takes in a 2D list of ints and outputs a 2D list of nodes):
+Initialize nodes to have infinity as the shortest path cost
+Iterate through each node in the 2D list of nodes
+For each node..
+Check nodes at east/west/north/south coordinates that are within the row/col indexes of the matrix, adding them as neighbors of current node
+
+Solution function (input is output of helper function, returns lowest):
+Initialize fringe stack with root node
+
+Until fringe stack is empty:
+Remove the last node
+Check removed node's neighbors - is the sum of the current node's value and the neighbor's value less than the neighboring node's shortest path cost?
+If this is the case, add node to fringe stack
+
+When the fringe stack is empty, return the lowest path cost of the node in the last column of the last row of the matrix.
+
+[This will be the lowest risk level cost to get from the start node to the end node.]
