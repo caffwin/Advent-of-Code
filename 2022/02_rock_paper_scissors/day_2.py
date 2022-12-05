@@ -55,8 +55,7 @@ def calc_strategy_guide_total_score(TEST_INPUT_FILE):
             sum_score += match_score
             p2_score += calc_match_total_p2(stripped_line)
 
-    # return sum_score
-    return p2_score
+    return sum_score, p2_score
 
 def calculate_match_total(strategy_guide_pair):
     """
@@ -73,9 +72,9 @@ def calculate_match_total(strategy_guide_pair):
     return int(outcome_score + shape_score)
 
 def run():
-    p1_solution = calc_strategy_guide_total_score(TEST_INPUT_FILE)
-    print("p1 solution: ", p1_solution)
-
+    p1_solution, p2_solution = calc_strategy_guide_total_score(TEST_INPUT_FILE)
+    print("part one solution: ", p1_solution)
+    print("part two solution:", p2_solution)
     return
 
 if __name__ == "__main__":
