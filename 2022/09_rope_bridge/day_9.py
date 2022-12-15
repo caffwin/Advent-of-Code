@@ -24,6 +24,7 @@ def p1_solution():
     prev_head_coord = None
     curr_tail_coord = start_coord_tail
     unique_coords_tail = set()
+    unique_coords_tail.add(start_coord_tail)
     for instruction in INSTRUCTION_LIST:
         for i in range(instruction[1]):
             transformed_coord = tuple([sum(tup) for tup in zip(curr_head_coord, DIRECTION_DICT[instruction[0]])]) # instruction[0] is a single character string indicating the direction
