@@ -6,21 +6,18 @@ def p1_solution():
     sum_signal_strengths = 0
     with open(TEST_INPUT_FILE) as file:
         curr_value = 1
-        for i, line in enumerate(file): # can we enumerate here?
+        CYCLE_VALUE_LIST.append(curr_value) # Add 1 for first cycle
+        for line in(file):
             stripped_line = line.strip()
-            if len(stripped_line) == 4:
-                # print("Do nothing")
+            if len(stripped_line) == 4: # noop
                 CYCLE_VALUE_LIST.append(curr_value)
             else:
-                # print("adding to list")
-                CYCLE_VALUE_LIST.append(curr_value) # Add 1 for first cycle
+                CYCLE_VALUE_LIST.append(curr_value)
                 addx, value = stripped_line.split(" ")
                 curr_value += int(value)
                 CYCLE_VALUE_LIST.append(curr_value) # Add value at the end of second cycle
 
-    print("CYCLE_VALUE_LIST: ", CYCLE_VALUE_LIST)
     for cycle in SIGNAL_STRENGTH_CYCLES:
-        print("Adding ", str((cycle * CYCLE_VALUE_LIST[cycle-1])))
         sum_signal_strengths += (cycle * CYCLE_VALUE_LIST[cycle-1])
 
     return sum_signal_strengths
