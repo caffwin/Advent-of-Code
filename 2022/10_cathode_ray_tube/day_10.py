@@ -1,3 +1,5 @@
+import numpy as np  
+
 TEST_INPUT_FILE = "test_input.txt"
 CYCLE_VALUE_LIST = []
 SIGNAL_STRENGTH_CYCLES = [20, 60, 100, 140, 180, 220]
@@ -22,8 +24,14 @@ def p1_solution():
 
     return sum_signal_strengths
 
+def p2_solution(cycle_value_list):
+    chopped_cycle_list = cycle_value_list[:-1] # len 240
+    cycle_value_matrix = np.array_split(chopped_cycle_list, 40)
+    
+
 def run():
     print("Part one solution: ", p1_solution())
+    result = p2_solution(CYCLE_VALUE_LIST)
     return
 
 if __name__ == "__main__":
