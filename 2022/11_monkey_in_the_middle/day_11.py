@@ -1,8 +1,10 @@
 TEST_INPUT = "test_input.txt"
 MONKEY_DICT = {}
-NUM_ROUNDS = 20
+MODULUS = 1
 
 def parse_input():
+    global MODULUS
+    MODULUS = 1
     with open(TEST_INPUT) as file:
         monkey_num = None
         for line in file:
@@ -14,7 +16,7 @@ def parse_input():
 
             if stripped_line.startswith("Starting"):
                 worry_level_values = stripped_line[16:].split(",")
-                starting_worry_level_list = list(map(int, worry_level_values)) # list(map(int, list_of_strings))
+                starting_worry_level_list = list(map(int, worry_level_values))
                 MONKEY_DICT[monkey_num].append(starting_worry_level_list)
 
             if stripped_line.startswith("Operation"):
@@ -22,8 +24,9 @@ def parse_input():
                 MONKEY_DICT[monkey_num].append(operation)
 
             if stripped_line.startswith("Test"): # Always "divisible by"
-                divisible_by_rule = stripped_line[19:]
-                MONKEY_DICT[monkey_num].append(divisible_by_rule)
+                divisible_by = stripped_line[19:]
+                MODULUS *= int(divisible_by)
+                MONKEY_DICT[monkey_num].append(divisible_by)
 
             if stripped_line.startswith("If true"):
                 true_action_lst = stripped_line[9:].split(" ")
@@ -38,8 +41,7 @@ def parse_input():
         for key in MONKEY_DICT:
             MONKEY_DICT[key].append(0) # For holding total number of items inspected, part one solution
 
-
-def run(num_rounds):
+def run(num_rounds, use_modulus):
     # Monkey is a list containing:
         # Lists -- starting items
         # Operation
@@ -75,14 +77,15 @@ def run(num_rounds):
                     else: # must be an int -- old * 5
                         item_worry_level *= int(second_operand)
 
-                # Divide by 3
-                item_worry_level //= 3
+                if use_modulus:
+                    item_worry_level %= MODULUS # Part two solution
+                else:
+                    item_worry_level //= 3 # Part one solution, divide by 3
 
                 # Check "divisible by" rule
                 if item_worry_level % divisible_by_num == 0:
                     new_item = item_worry_level
                     MONKEY_DICT[true_condition_monkey][0].append(new_item)
-
                 else:
                     new_item = item_worry_level
                     MONKEY_DICT[false_condition_monkey][0].append(new_item)
@@ -96,10 +99,10 @@ def print_monkey_dict_worry_list(MONKEY_DICT):
     for key in MONKEY_DICT:
         print("Monkey ", str(key), ": " + str(MONKEY_DICT[key][0]))
 
-def p1_solution():
+def calc_product_top_two_inspected_items(monkey_dict):
     list_desc_inspected_item_count = []
-    for key in MONKEY_DICT:
-        list_desc_inspected_item_count.append(MONKEY_DICT[key][5])
+    for key in monkey_dict:
+        list_desc_inspected_item_count.append(monkey_dict[key][5])
 
     list_desc_inspected_item_count.sort(reverse=True)
     product_top_two_inspected_items = list_desc_inspected_item_count[0] * list_desc_inspected_item_count[1]
@@ -107,9 +110,10 @@ def p1_solution():
 
 def main():
     parse_input()
-    run(NUM_ROUNDS)
-    print("part one solution: ", p1_solution())
+    print("part one solution: ", calc_product_top_two_inspected_items(run(20, False)))
 
+    parse_input()
+    print("part two solution: ", calc_product_top_two_inspected_items(run(10000, True)))
     return
 
 if __name__ == "__main__":
