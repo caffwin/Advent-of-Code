@@ -3,6 +3,16 @@ MONKEY_DICT = {}
 MODULUS = 1
 
 def parse_input():
+    """
+    Parses input into a MONKEY_DICT, where each key represents a monkey and the value contains 6 elements with indices:
+        0 - A list of ints representing worry levels of each item
+        1 - The operator (either * or +) and second operand (either "old" (str) or an int) describing how each worry level changes per round
+        2 - An int representing the "divisible by" rule, deciding which monkey to pass the item to 
+        3 - An int representing the monkey (key) to pass the item to if the condition from the second index is True
+        4 - An int representing the monkey (key) to pass the item to if the condition from the second index is False
+        5 - An int representing the total number of items inspected by each monkey for calculating part one's solution    
+    """
+
     global MODULUS
     MODULUS = 1
     with open(TEST_INPUT) as file:
@@ -39,15 +49,20 @@ def parse_input():
                 MONKEY_DICT[monkey_num].append(false_action_pass_to_monkey)
 
         for key in MONKEY_DICT:
-            MONKEY_DICT[key].append(0) # For holding total number of items inspected, part one solution
+            MONKEY_DICT[key].append(0)
 
 def run(num_rounds, use_modulus):
-    # Monkey is a list containing:
-        # Lists -- starting items
-        # Operation
-        # Rule
-        # True outcome
-        # False outcome
+    """
+    Takes in num_rounds (int), performs calculations for each round:
+        - Iterates through each monkey, inspecting each item from it's item_worry_level_list
+        - Performs calculations on each worry level based on operation
+        - Divides by 3 (for part 1)
+        - Removes item from current monkey's item_worry_level_list and adds to respective monkey's list depending
+        on True (MONKEY_DICT[3]) or False (MONKEY_DICT[4]) value based on rule condition
+
+    use_modulus (bool) argument is for toggling between part one and two solutions.
+    """
+
     for i in range(num_rounds):
         for monkey_num in MONKEY_DICT:
             monkey_attributes = MONKEY_DICT[monkey_num]
