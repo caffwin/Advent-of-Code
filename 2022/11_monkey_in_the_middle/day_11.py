@@ -1,49 +1,116 @@
 TEST_INPUT = "test_input.txt"
 MONKEY_DICT = {}
+NUM_ROUNDS = 20
 
-# Output should be a monkey dict containing monkeys (key) with a list (value) of worry levels (ints) after the instruction is carried out.
-# Function takes in step # and applies that to each monkey
-# List of:
-# Lists -- starting items
-# Operation
-# Rule
-# True outcome
-# False outcome
+def parse_input():
+    with open(TEST_INPUT) as file:
+        monkey_num = None
+        for line in file:
+            stripped_line = line.strip()
+
+            if stripped_line.startswith("Monkey"):
+                monkey_num = str(stripped_line[7:-1])
+                MONKEY_DICT[monkey_num] = []
+
+            if stripped_line.startswith("Starting"):
+                worry_level_values = stripped_line[16:].split(",")
+                starting_worry_level_list = list(map(int, worry_level_values)) # list(map(int, list_of_strings))
+                MONKEY_DICT[monkey_num].append(starting_worry_level_list)
+
+            if stripped_line.startswith("Operation"):
+                operation = stripped_line[21:].split(" ")
+                MONKEY_DICT[monkey_num].append(operation)
+
+            if stripped_line.startswith("Test"): # Always "divisible by"
+                divisible_by_rule = stripped_line[19:]
+                MONKEY_DICT[monkey_num].append(divisible_by_rule)
+
+            if stripped_line.startswith("If true"):
+                true_action_lst = stripped_line[9:].split(" ")
+                true_action_pass_to_monkey = true_action_lst[-1]
+                MONKEY_DICT[monkey_num].append(true_action_pass_to_monkey)
+
+            if stripped_line.startswith("If false"):
+                false_action_lst = stripped_line[10:].split(" ")
+                false_action_pass_to_monkey = false_action_lst[-1]
+                MONKEY_DICT[monkey_num].append(false_action_pass_to_monkey)
+
+        for key in MONKEY_DICT:
+            MONKEY_DICT[key].append(0) # For holding total number of items inspected, part one solution
 
 
-with open(TEST_INPUT) as file:
-    monkey_num = None
-    for line in file:
-        stripped_line = line.strip()
+def run(num_rounds):
+    # Monkey is a list containing:
+        # Lists -- starting items
+        # Operation
+        # Rule
+        # True outcome
+        # False outcome
+    for i in range(num_rounds):
+        for monkey_num in MONKEY_DICT:
+            monkey_attributes = MONKEY_DICT[monkey_num]
+            item_worry_level_list = monkey_attributes[0]
+            full_operation = monkey_attributes[1] # Ex: ["*", "old"]
+            divisible_by_num = int(monkey_attributes[2])
+            true_condition_monkey = monkey_attributes[3]
+            false_condition_monkey = monkey_attributes[4]
 
-        if stripped_line.startswith("Monkey"):
-            monkey_num = str(stripped_line[7:-1])
-            MONKEY_DICT[monkey_num] = []
+            num_items_inspected = 0 # For part one solution
 
-        # For starting items
-        if stripped_line.startswith("Starting"):
-            starting_worry_level_list = stripped_line[16:].split(",")
-            MONKEY_DICT[monkey_num].append(starting_worry_level_list)
+            while item_worry_level_list:
+                # Operator
+                item_worry_level = item_worry_level_list.pop(0)
+                num_items_inspected += 1
+                operator = full_operation[0] 
+                second_operand = full_operation[1]
+                if operator == "+":
+                    if second_operand == "old": # old + old
+                        item_worry_level += item_worry_level
+                    else: # old + 5
+                        item_worry_level += int(second_operand)
 
-        if stripped_line.startswith("Operation"):
-            operation = stripped_line[11:].split(" ")
-            MONKEY_DICT[monkey_num].append(operation)
+                else: # Assume it must be *
+                    if second_operand == "old": # old * old
+                        item_worry_level *= item_worry_level
+                    else: # must be an int -- old * 5
+                        item_worry_level *= int(second_operand)
 
-        if stripped_line.startswith("Test"): # The rule
-            rule = stripped_line[6:]
-            MONKEY_DICT[monkey_num].append(rule)
+                # Divide by 3
+                item_worry_level //= 3
 
-        if stripped_line.startswith("If true"):
-            true_action = stripped_line[9:]
-            MONKEY_DICT[monkey_num].append(true_action)
+                # Check "divisible by" rule
+                if item_worry_level % divisible_by_num == 0:
+                    new_item = item_worry_level
+                    MONKEY_DICT[true_condition_monkey][0].append(new_item)
 
-        if stripped_line.startswith("If false"):
-            false_action = stripped_line[10:]
-            MONKEY_DICT[monkey_num].append(false_action)
- 
-def run():
-    print(MONKEY_DICT)
+                else:
+                    new_item = item_worry_level
+                    MONKEY_DICT[false_condition_monkey][0].append(new_item)
+
+            MONKEY_DICT[monkey_num][5] += num_items_inspected
+
+    return MONKEY_DICT
+
+# Debug
+def print_monkey_dict_worry_list(MONKEY_DICT):
+    for key in MONKEY_DICT:
+        print("Monkey ", str(key), ": " + str(MONKEY_DICT[key][0]))
+
+def p1_solution():
+    list_desc_inspected_item_count = []
+    for key in MONKEY_DICT:
+        list_desc_inspected_item_count.append(MONKEY_DICT[key][5])
+
+    list_desc_inspected_item_count.sort(reverse=True)
+    product_top_two_inspected_items = list_desc_inspected_item_count[0] * list_desc_inspected_item_count[1]
+    return product_top_two_inspected_items
+
+def main():
+    parse_input()
+    run(NUM_ROUNDS)
+    print("part one solution: ", p1_solution())
+
     return
 
 if __name__ == "__main__":
-    run()
+    main()
