@@ -123,6 +123,11 @@ def part_one_solution(start_coord):
     # print("len_shortest_path_minus_start_end_nodes: ", len_shortest_path_minus_start_end_nodes)
     return len_shortest_path_minus_start_end_nodes # len_shortest_path_minus_start_end_nodes
 
+# Sabqpo
+# accExk
+# acctuv
+
+
 def main():
     parse_input() # Populates HEIGHTMAP_MATRIX
     result = find_start_end_coords(HEIGHTMAP_MATRIX)
